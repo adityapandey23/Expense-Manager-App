@@ -20,12 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 
 @Composable
 fun HomeScreen(){
@@ -64,6 +66,15 @@ fun HomeScreen(){
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             })
+            TransactionList(modifier = Modifier
+                .fillMaxWidth()
+                .constrainAs(list) {
+                    top.linkTo(card.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                    height = Dimension.fillToConstraints
+                })
         }
     }
 }
@@ -113,14 +124,73 @@ fun CardItem(modifier: Modifier){
 }
 
 @Composable
+fun TransactionList(modifier : Modifier) = Column( modifier = modifier.padding(horizontal = 16.dp)) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Text(text ="Recent Transactions" , fontSize = 20.sp)
+        Text(
+            text ="See All" ,
+            fontSize = 16.sp,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+    }
+    TransactionItem(
+        title = "Netflix",
+        amount = "- $ 200.00",
+        icon = R.drawable.upwork ,
+        date = "Today",
+        color = Color.Red
+    )
+    TransactionItem(
+        title = "YouTube",
+        amount = "- $ 200.00",
+        icon = R.drawable.youtubelogo ,
+        date = "Today",
+        color = Color.Red
+    )
+    TransactionItem(
+        title = "Transfer",
+        amount = " $ 4000.00",
+        icon = R.drawable.transfer ,
+        date = "Today",
+        color = Color.Green
+    )
+    TransactionItem(
+        title = "PayPal",
+        amount = "- $ 200.00",
+        icon = R.drawable.paypal ,
+        date = "Today",
+        color = Color.Red
+    )
+}
+
+@Composable
 fun CardRowItem(modifier: Modifier, title: String, amount: String, image:Int){
     Column(modifier = modifier) {
         Row {
             Image(painter = painterResource(id = image), contentDescription = null)
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(10.dp))
             Text(text = title, fontSize = 16.sp, color = Color.White)
         }
         Text(text = amount, fontSize = 20.sp, color = Color.White)
+    }
+}
+@Composable
+fun TransactionItem(title :String , amount: String , icon:Int , date : String , color : Color) {
+    Box(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Row {
+            Image(
+                painter = painterResource(id = icon), contentDescription = null ,
+                modifier = Modifier.size(50.dp)
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Column {
+                Text(text = title , fontSize = 16.sp)
+                Text(text = date , fontSize = 12.sp)
+            }
+        }
+        Text(
+            text= amount, fontSize = 20.sp , modifier=Modifier.align(Alignment.CenterEnd), color = color
+        )
     }
 }
 
