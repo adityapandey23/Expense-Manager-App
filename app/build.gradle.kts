@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("kapt")
 }
 
 android {
@@ -69,4 +70,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     //noinspection UseTomlInstead
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1") // ConstraintLayout Compose
+
+    val room_version ="2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("android.room:room-compiler:$room_version")
+    //to use kotlin processing tool (kapt)
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+
 }
