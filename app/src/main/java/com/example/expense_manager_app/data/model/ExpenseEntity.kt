@@ -1,11 +1,14 @@
 package com.example.expense_manager_app.data.model
 import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 @Entity(tableName = "expense_table")
 data class ExpenseEntity(
-    val id: Int ,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? ,
     val title: String,
     val amount: Double,
-    val data: Long,
+    val date: Long,
     val category:String,
     val type: String
 )
