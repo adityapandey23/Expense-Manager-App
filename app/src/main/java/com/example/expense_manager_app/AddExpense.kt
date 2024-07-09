@@ -1,4 +1,4 @@
-package com.example.expense_manager_app.ui.theme
+package com.example.expense_manager_app
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -20,7 +20,6 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuBoxScope
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -31,22 +30,28 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.expense_manager_app.R
-import com.example.expense_manager_app.Utils
+import com.example.expense_manager_app.data.model.ExpenseEntity
+import com.example.expense_manager_app.viewmodel.AddExpenseViewModel
+import com.example.expense_manager_app.viewmodel.AddExpenseViewModelFactory
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddExpense() {
+    val viewModel = AddExpenseViewModelFactory(LocalContext.current).create(AddExpenseViewModel::class.java)
+    val coroutineScope = rememberCoroutineScope()
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (nameRow, list, card, topBar) = createRefs()
@@ -90,14 +95,18 @@ fun AddExpense() {
                     top.linkTo(nameRow.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                })
+                }, onAddExpenseClick = {
+                    coroutineScope.launch {
+                        viewModel.addExpense((it))
+                    }
+            })
         }
     }
 }
 
 @SuppressLint("RememberReturnType")
 @Composable
-fun DataForm(modifier: Modifier) {
+fun DataForm(modifier: Modifier, onAddExpenseClick: (model:ExpenseEntity) -> Unit) {
 
     val name = remember {
         mutableStateOf("")
@@ -159,7 +168,7 @@ fun DataForm(modifier: Modifier) {
         //dropdown
         Text(text = "Category", fontSize = 14.sp)
         Spacer(modifier = Modifier.size(4.dp))
-        ExpenseDropDown(listOf("Netflix","Paypal","Starbucks","Salary","Upwork"),
+        ExpenseDropDown(listOf("Netflix","Paypal","Starbucks","Salary","Upwork","Unknown"),
             onItemSelected = {
                 category.value = it
         })
@@ -175,7 +184,17 @@ fun DataForm(modifier: Modifier) {
         Spacer(modifier = Modifier.size(8.dp))
 
         Button(
-            onClick = { },
+            onClick = {
+                      val model = ExpenseEntity(
+                          null,
+                          name.value,
+                          amount.value.toDoubleOrNull() ?: 0.0,
+                          date.value,
+                          category.value,
+                          type.value
+                      )
+                      onAddExpenseClick(model)
+            },
             modifier = Modifier
                 .clip(RoundedCornerShape(2.dp))
                 .fillMaxWidth()

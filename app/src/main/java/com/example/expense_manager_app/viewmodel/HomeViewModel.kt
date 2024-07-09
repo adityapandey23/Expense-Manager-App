@@ -7,6 +7,7 @@ import com.example.expense_manager_app.R
 import com.example.expense_manager_app.data.ExpenseDataBase
 import com.example.expense_manager_app.data.dao.ExpenseDao
 import com.example.expense_manager_app.data.model.ExpenseEntity
+import kotlin.math.round
 
 class HomeViewModel(dao: ExpenseDao) : ViewModel() {
     val expense = dao.getAllExpenses()
@@ -22,7 +23,8 @@ class HomeViewModel(dao: ExpenseDao) : ViewModel() {
 
             }
         }
-        return "$ ${total}"
+        total = round(total)
+        return "$ $total"
 
     }
 
@@ -33,7 +35,8 @@ class HomeViewModel(dao: ExpenseDao) : ViewModel() {
                 total += it.amount
             }
         }
-        return "$ ${total}"
+        total = round(total)
+        return "$ $total"
 
     }
 
@@ -44,7 +47,8 @@ class HomeViewModel(dao: ExpenseDao) : ViewModel() {
                 total+=it.amount
             }
         }
-        return "$ ${total}"
+        total = round(total)
+        return "$ $total"
     }
     fun getItemIcon(item: ExpenseEntity): Int {
         if (item.category == "Paypal")
