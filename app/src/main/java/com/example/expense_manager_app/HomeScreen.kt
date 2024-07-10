@@ -2,6 +2,7 @@ package com.example.expense_manager_app
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,18 +31,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.expense_manager_app.data.model.ExpenseEntity
 import com.example.expense_manager_app.viewmodel.HomeViewModel
 import com.example.expense_manager_app.viewmodel.HomeViewModelFactory
 import androidx.compose.foundation.layout.Box as Box
 
 @Composable
-fun HomeScreen(){
+fun HomeScreen(navController: NavController){
     val viewModel : HomeViewModel =
         HomeViewModelFactory(LocalContext.current).create(HomeViewModel::class.java)
     Surface (modifier = Modifier.fillMaxSize()){
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (nameRow, list, card, topBar) = createRefs()
+            val (nameRow, list, card, topBar, addB) = createRefs()
             Image(painter = painterResource(id = R.drawable.toprec), contentDescription = null,
             modifier = Modifier.constrainAs(topBar){
                 top.linkTo(parent.top)
@@ -87,6 +91,13 @@ fun HomeScreen(){
                     height = Dimension.fillToConstraints
                 } , list=state.value , viewModel
             )
+            Image(painter = painterResource(id = R.drawable.addbtn), contentDescription = null, modifier =  Modifier.constrainAs(addB){
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end)
+
+            }.size(48.dp).clip(CircleShape).clickable {
+                navController.navigate("/add")
+            })
         }
     }
 }
@@ -200,5 +211,5 @@ fun TransactionItem(title :String , amount: String , icon:Int , date : String , 
 @Composable
 @Preview(showBackground = true)
 fun PreviewHomeScreen(){
-    HomeScreen()
+    HomeScreen(rememberNavController())
 }

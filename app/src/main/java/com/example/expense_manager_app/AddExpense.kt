@@ -43,13 +43,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.expense_manager_app.data.model.ExpenseEntity
 import com.example.expense_manager_app.viewmodel.AddExpenseViewModel
 import com.example.expense_manager_app.viewmodel.AddExpenseViewModelFactory
 import kotlinx.coroutines.launch
 
 @Composable
-fun AddExpense() {
+fun AddExpense(navController: NavController) {
     val viewModel = AddExpenseViewModelFactory(LocalContext.current).create(AddExpenseViewModel::class.java)
     val coroutineScope = rememberCoroutineScope()
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -73,7 +75,9 @@ fun AddExpense() {
                 }) {
                 Image(painter = painterResource(id = R.drawable.chevron_left),
                     contentDescription = null,
-                    modifier = Modifier.align(Alignment.CenterStart)
+                    modifier = Modifier.align(Alignment.CenterStart).clickable {
+                        navController.popBackStack()
+                    }
                 )
                 Text(
                     text = "Add Expense",
@@ -97,7 +101,9 @@ fun AddExpense() {
                     end.linkTo(parent.end)
                 }, onAddExpenseClick = {
                     coroutineScope.launch {
-                        viewModel.addExpense((it))
+                        if(viewModel.addExpense((it))){
+                            navController.popBackStack()
+                        }
                     }
             })
         }
@@ -272,6 +278,6 @@ fun ExpenseDropDown(listOfItems: List<String>, onItemSelected: (item: String) ->
 @Composable
 @Preview(showBackground = true)
 fun AddExpensePreview() {
-    AddExpense()
+    AddExpense(rememberNavController())
 }
 
